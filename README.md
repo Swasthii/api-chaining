@@ -1,70 +1,74 @@
-# Getting Started with Create React App
+API Chaining
+API Chaining is a design pattern that allows multiple API calls to be combined into a single request, streamlining interactions and reducing the overhead of multiple network requests. This approach is particularly useful in scenarios where sequential API calls are necessary, as it enhances performance and simplifies client-server communication.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Features
+Sequential API Calls: Chain multiple API calls in a defined sequence within a single request.
+Reduced Latency: Minimize the delay associated with multiple network round-trips by consolidating requests.
+Simplified Client Logic: Offload complex API interaction logic from the client to the server, leading to cleaner client-side code.
+Installation
+To integrate API Chaining into your project, you can install the package via npm:
 
-## Available Scripts
+bash
+npm install api-chain
+This will add the api-chain module to your project's dependencies.
 
-In the project directory, you can run:
+Usage
+Below is an example demonstrating how to set up and use API Chaining in a Node.js environment:
 
-### `npm start`
+javascript
+// Import the api-chain module
+const api = require('api-chain');
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+// Define your API by passing methods to create
+const fs = api.create({
+  read: require('fs').readFile,
+  toString: function (data, next) {
+    next(null, data.toString());
+  },
+  view: function (contents) {
+    console.log(contents);
+  }
+});
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+// Use the chainable 'fs' API as created above
+fs.read('./example.txt')
+  .toString()
+  .view();
+In this example, the fs object is enhanced with chainable methods that allow for reading a file, converting its contents to a string, and then viewing the contents—all in a streamlined, sequential manner.
 
-### `npm test`
+Options
+API Chaining provides several configurable options to tailor its behavior:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+onError: A function called when an error is emitted, unless the error method is overwritten.
+throwErrors: A boolean indicating whether to throw unhandled errors (ignored if onError exists). Default is true.
+continueErrors: A boolean indicating whether to resume execution of commands after errors occur. Default is false.
+These options can be set to customize error handling and control flow according to your application's requirements.
 
-### `npm run build`
+Built-in Chainable Methods
+API Chaining includes several built-in methods to enhance control flow:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+api.wait(n): Pauses execution flow for n milliseconds.
+api.until(fn): Waits until the callback function fn returns true before continuing execution.
+api.chain(fn): Adds a callback function to be executed next in the control flow stack.
+These methods provide flexibility in managing asynchronous operations within your API chains.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Immediate Methods
+The following methods execute immediately (rather than within the control flow) and always return the API object:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+api.setOption(option, value): Sets a specific option to the given value.
+api.setOptions(options): Sets multiple options at once based on a collection of key/value pairs.
+These immediate methods allow for dynamic configuration of the API chaining behavior.
 
-### `npm run eject`
+Testing
+To test your API chains, ensure that the development dependencies are installed. Navigate to the directory where api-chain is installed and run:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+bash
+npm install
+After the installation of dependencies is complete, execute:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+bash
+npm test
+This will launch the test runner, allowing you to verify the functionality of your API chains.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+License
+This project is licensed under the MIT License. For more details, refer to the license.txt file included in the repository.
